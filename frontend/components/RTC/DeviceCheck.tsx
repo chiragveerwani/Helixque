@@ -24,26 +24,16 @@ export default function DeviceCheck() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const getCam = async () => {
-    // Guard clause: prevent getUserMedia error when both are off
-    if (!videoOn && !audioOn) {
-      console.log("Both camera and mic are off, cleaning up tracks");
-      // Stop existing tracks
-      if (localAudioTrack) {
-        localAudioTrack.stop();
-        setLocalAudioTrack(null);
-      }
-      if (localVideoTrack) {
-        localVideoTrack.stop();
-        setLocalVideoTrack(null);
-      }
-      // Clear video preview
-      if (videoRef.current) {
-        videoRef.current.srcObject = null;
-      }
-      return;
-    }
-
     try {
+      // Simple guard: if both are off, just clear the preview but don't request media
+      if (!videoOn && !audioOn) {
+        console.log("Both camera and mic are off, clearing preview only");
+        if (videoRef.current) {
+          videoRef.current.srcObject = null;
+        }
+        return;
+      }
+
       const stream = await navigator.mediaDevices.getUserMedia({
         video: videoOn,
         audio: audioOn,
@@ -52,10 +42,10 @@ export default function DeviceCheck() {
       const videoTrack = stream.getVideoTracks()[0] || null;
 
       // Stop existing tracks before setting new ones
-      if (localAudioTrack) {
+      if (localAudioTrack && localAudioTrack.readyState === "live") {
         localAudioTrack.stop();
       }
-      if (localVideoTrack) {
+      if (localVideoTrack && localVideoTrack.readyState === "live") {
         localVideoTrack.stop();
       }
 
