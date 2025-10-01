@@ -124,10 +124,16 @@ export const useScreenShare = ({
         console.log("✅ Successfully replaced video track with screen share");
       }
 
+      // Store ref to latest stopScreenShare
+      const latestStopRef = useRef(stopScreenShare);
+      useEffect(() => {
+        latestStopRef.current = stopScreenShare;
+      }, [stopScreenShare]);
+
       // Handle track ending (user stops sharing via browser UI)
       videoTrack.onended = () => {
         console.log("🛑 Screen share track ended via browser");
-        stopScreenShare();
+        void latestStopRef.current();
       };
 
       // Update state
@@ -153,7 +159,28 @@ export const useScreenShare = ({
       return true;
         } catch (error: any) {
       console.error("Error starting screen share:", error);
-      
+
+      // Tear down any partially acquired screen-share stream
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current = null;
+      }
+
+      // Restore the previous camera track if possible
+      if (videoSenderRef.current && previousTrackRef.current) {
+        try {
+          await videoSenderRef.current.replaceTrack(previousTrackRef.current);
+        } catch (restoreError) {
+          console.warn(
+        "Failed to restore previous track after screen-share error",
+        restoreError
+          );
+        }
+      }
+
+      trackRef.current = null;
+      previousTrackRef.current = null;
+
       let errorMessage = "Failed to start screen sharing";
       
       // Handle specific error types

@@ -33,7 +33,7 @@ export class ScreenShareManager {
     this.activeScreenShares.set(userId, {
       isScreenSharing: true,
       micOn: deviceState?.micOn ?? previousState?.micOn ?? false,
-      camOn: deviceState?.camOn ?? previousState?.camOn ?? false,
+      camOn: deviceState?.camOn ?? previousState?.camOn ?? false, 
       quality: this.determineQuality(constraints),
       displaySurface: constraints?.video?.displaySurface || "unknown"
     });
