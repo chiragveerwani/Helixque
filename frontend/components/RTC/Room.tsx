@@ -85,6 +85,19 @@ export default function Room({
   );
   const [screenShareOn, setScreenShareOn] = useState(false);
 
+  // Sync internal states with props when they change (for DeviceCheck toggles)
+  useEffect(() => {
+    if (typeof audioOn === "boolean") {
+      setMicOn(audioOn);
+    }
+  }, [audioOn]);
+
+  useEffect(() => {
+    if (typeof videoOn === "boolean") {
+      setCamOn(videoOn);
+    }
+  }, [videoOn]);
+
   // Peer mic indicator (keeping this; camera overlay removed per your request)
   const [peerMicOn, setPeerMicOn] = useState(true);
   const [peerCamOn, setPeerCamOn] = useState(true);
