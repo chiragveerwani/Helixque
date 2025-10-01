@@ -158,13 +158,22 @@ io.on("connection", (socket: Socket) => {
    */
   socket.on("screenshare:get-room-state", ({ roomId }, callback) => {
     try {
-      const activeScreenShares = screenShareManager.getActiveScreenSharesInRoom(roomId);
-      callback({ success: true, data: Array.from(activeScreenShares.entries()) });
+      const roomSockets = io.sockets.adapter.rooms.get(roomId) ?? new Set<string>();
+      const activeScreenShares = Array.from(roomSockets).reduce<
+        [string, NonNullable<ReturnType<typeof screenShareManager.getScreenShareState>>][]
+      >((acc, socketId) => {
+        const state = screenShareManager.getScreenShareState(socketId);
+        if (state?.isScreenSharing) {
+          acc.push([socketId, state]);
+        }
+        return acc;
+      }, []);
+
+      callback({ success: true, data: activeScreenShares });
     } catch (error) {
       callback({ success: false, error: "Failed to get room state" });
     }
   });
-
   // ===== LEGACY SCREEN SHARE EVENTS (for backward compatibility) =====
   
   // Legacy screen share state toggle

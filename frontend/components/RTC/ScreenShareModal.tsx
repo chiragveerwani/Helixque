@@ -131,8 +131,14 @@ export const ScreenShareModal: React.FC<ScreenShareModalProps> = ({
   };
 
   const handleStopShare = async () => {
-    await onStopShare();
-    onClose();
+    try {
+      const success = await onStopShare();
+      if (success) {
+        onClose();
+      }
+    } catch (error) {
+      console.error("[ScreenShareModal] Failed to stop screen share", error);
+    }
   };
 
   if (!isOpen) return null;

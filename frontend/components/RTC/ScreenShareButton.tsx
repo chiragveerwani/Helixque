@@ -83,6 +83,7 @@ export const ScreenShareButton: React.FC<ScreenShareButtonProps> = ({
   return (
     <div className="relative group">
       <button
+        type="button"
         onClick={onClick}
         disabled={disabled || isLoading}
         className={getButtonClasses()}

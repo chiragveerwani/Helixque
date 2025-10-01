@@ -55,6 +55,7 @@ export const useScreenShare = ({
 
   const streamRef = useRef<MediaStream | null>(null);
   const trackRef = useRef<MediaStreamTrack | null>(null);
+  const previousTrackRef = useRef<MediaStreamTrack | null>(null);
 
   /**
    * Start screen sharing with optimal constraints
@@ -115,7 +116,11 @@ export const useScreenShare = ({
 
       // Replace video track if sender exists
       if (videoSenderRef.current) {
-        await videoSenderRef.current.replaceTrack(videoTrack);
+        const sender = videoSenderRef.current;
+        if (!previousTrackRef.current) {
+          previousTrackRef.current = sender.track ?? null;
+        }
+        await sender.replaceTrack(videoTrack);
         console.log("✅ Successfully replaced video track with screen share");
       }
 
@@ -146,7 +151,7 @@ export const useScreenShare = ({
       });
 
       return true;
-    } catch (error: any) {
+        } catch (error: any) {
       console.error("Error starting screen share:", error);
       
       let errorMessage = "Failed to start screen sharing";
@@ -174,18 +179,18 @@ export const useScreenShare = ({
       toast.error("Screen Share Error", { description: errorMessage });
       
       return false;
-    }
-  }, [socket, roomId, state.isSharing, videoSenderRef, onScreenShareStart, onError]);
+        }
+      }, [socket, roomId, state.isSharing, videoSenderRef, onScreenShareStart, onError]);
 
-  /**
-   * Stop screen sharing
-   */
-  const stopScreenShare = useCallback(async () => {
-    if (!state.isSharing) {
+      /**
+       * Stop screen sharing
+       */
+      const stopScreenShare = useCallback(async () => {
+        if (!state.isSharing) {
       return false;
-    }
+        }
 
-    try {
+        try {
       console.log("🛑 Stopping screen share");
 
       // Stop all tracks
@@ -195,13 +200,15 @@ export const useScreenShare = ({
         });
       }
 
-      // Clear track from sender (restore camera or set to null)
+      // Restore original track from sender
       if (videoSenderRef.current) {
-        await videoSenderRef.current.replaceTrack(null);
+        const sender = videoSenderRef.current;
+        await sender.replaceTrack(previousTrackRef.current ?? null);
       }
 
-      // Clear references
+      // Clear references 
       streamRef.current = null;
+      previousTrackRef.current = null;
       trackRef.current = null;
 
       // Update state
@@ -258,25 +265,22 @@ export const useScreenShare = ({
     const settings = trackRef.current.getSettings();
     return {
       resolution: {
-        width: settings.width || 0,
-        height: settings.height || 0
+      width: settings.width || 0,
+      height: settings.height || 0
       },
       frameRate: settings.frameRate || 0,
-      displaySurface: (settings as any).displaySurface,
-      cursor: (settings as any).cursor
+      displaySurface: (settings as any).displaySurface
     };
-  }, []);
+    }, []);
 
-  /**
-   * Cleanup on unmount
-   */
-  useEffect(() => {
+    useEffect(() => {
     return () => {
       if (state.isSharing) {
-        stopScreenShare();
+      void stopScreenShare();
       }
     };
-  }, []);
+    }, [state.isSharing, stopScreenShare]);
+
 
   return {
     // State

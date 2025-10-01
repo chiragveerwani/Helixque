@@ -18,7 +18,8 @@ export class ScreenShareManager {
   public startScreenShare(
     userId: string, 
     roomId: string, 
-    constraints: any
+    constraints: any,
+    deviceState?: { micOn: boolean; camOn: boolean }
   ): ScreenShareEvent {
     const event: ScreenShareEvent = {
       type: "start",
@@ -27,12 +28,12 @@ export class ScreenShareManager {
       userId,
       roomId
     };
-
     // Store active screen share state
+    const previousState = this.activeScreenShares.get(userId);
     this.activeScreenShares.set(userId, {
       isScreenSharing: true,
-      micOn: true, // Assume mic stays on during screen share
-      camOn: false, // Camera typically replaced by screen share
+      micOn: deviceState?.micOn ?? previousState?.micOn ?? false,
+      camOn: deviceState?.camOn ?? previousState?.camOn ?? false,
       quality: this.determineQuality(constraints),
       displaySurface: constraints?.video?.displaySurface || "unknown"
     });
@@ -56,14 +57,12 @@ export class ScreenShareManager {
       userId,
       roomId
     };
-
     // Update state
     const currentState = this.activeScreenShares.get(userId);
     if (currentState) {
       this.activeScreenShares.set(userId, {
         ...currentState,
-        isScreenSharing: false,
-        camOn: true // Restore camera when screen share stops
+        isScreenSharing: false
       });
     }
 
