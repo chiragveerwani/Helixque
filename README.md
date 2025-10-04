@@ -270,7 +270,8 @@ There are many ways you can contribute to Helixque:
 
 ### Repo Activity
 
-![Helixque Repo Activity](https://repobeats.axiom.co/api/embed/241636b7674153b09f7a274fc31e67ceaf13859f.svg "Repobeats analytics image")
+![Helixque Repo Activity](https://repobeats.axiom.co/api/embed/104659808acdebcf5999205983b83c1cae5b9ae4.svg "Repobeats analytics image")
+
 
 ### We Couldn't Have Done This Without You
 
