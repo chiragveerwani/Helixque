@@ -1968,24 +1968,20 @@ export default function Room({
         <audio ref={remoteAudioRef} autoPlay style={{ display: "none" }} />
 
         {/* --- Chat Drawer --- */}
-        {/* KEY CHANGE: On mobile, it's a 'fixed' overlay. On desktop ('md:'), it's a 'relative' sidebar. */}
-         <div
+        <div
           className={`
             bg-neutral-950 backdrop-blur-sm transition-transform duration-300
             
             fixed inset-y-0 right-0 z-30 h-full w-full max-w-sm border-l border-white/10
             md:relative md:z-auto md:h-auto md:w-[300px] md:max-w-none md:border-l
             
-            ${showChat ? "translate-x-0 " : "translate-x-full hidden transition-all duration-100 delay-100"}
+            ${
+              showChat
+                ? "translate-x-0 "
+                : "translate-x-full hidden transition-all duration-100 delay-100"
+            }
           `}
         >
-          {/* <ChatPanel
-            socket={socketRef.current}
-            roomId={roomId}
-            name={name}
-            mySocketId={mySocketId}
-            collapsed={false}
-          /> */}
           <div className="p-4 h-full flex items-center justify-center">
             Chat Panel Content
           </div>
@@ -1994,95 +1990,104 @@ export default function Room({
 
       {/* --- Controls Area --- */}
       <div className="absolute bottom-0 left-0 right-0 z-40 flex h-20 items-center px-2">
-  <div className="w-full overflow-x-auto scrollbar-hide">
-   
-    <div className="flex w-full items-center justify-center gap-4 sm:justify-between">
-      <div className="flex shrink-0 items-center gap-1 rounded-full border border-white/10 bg-black/50 p-1 backdrop-blur sm:gap-2 sm:p-1.5">
-        <button
-          onClick={handleRecheck}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 sm:h-11 sm:w-11"
-          title="Recheck"
-        >
-          <IconRefresh className="h-4 w-4 sm:h-5 sm:w-5" />
-        </button>
-        <button
-          onClick={toggleMic}
-          className={`flex h-10 w-10 items-center justify-center rounded-full transition sm:h-11 sm:w-11 ${
-            micOn ? "bg-white/10 hover:bg-white/20" : "bg-red-600 hover:bg-red-500"
-          }`}
-          title={micOn ? "Mute" : "Unmute"}
-        >
-          {micOn ? (
-            <IconMicrophone className="h-4 w-4 sm:h-5 sm:w-5" />
-          ) : (
-            <IconMicrophoneOff className="h-4 w-4 sm:h-5 sm:w-5" />
-          )}
-        </button>
-        <button
-          onClick={toggleCam}
-          className={`flex h-10 w-10 items-center justify-center rounded-full transition sm:h-11 sm:w-11 ${
-            camOn ? "bg-white/10 hover:bg-white/20" : "bg-red-600 hover:bg-red-500"
-          }`}
-          title={camOn ? "Stop video" : "Start video"}
-        >
-          {camOn ? (
-            <IconVideo className="h-4 w-4 sm:h-5 sm:w-5" />
-          ) : (
-            <IconVideoOff className="h-4 w-4 sm:h-5 sm:w-5" />
-          )}
-        </button>
-        <button
-          onClick={toggleScreenShare}
-          className={`flex h-10 w-10 items-center justify-center rounded-full transition sm:h-11 sm:w-11 ${
-            screenShareOn ? "bg-blue-600 hover:bg-blue-500" : "bg-white/10 hover:bg-white/20"
-          }`}
-          title={screenShareOn ? "Stop sharing" : "Share screen"}
-        >
-          {screenShareOn ? (
-            <IconScreenShareOff className="h-4 w-4 sm:h-5 sm:w-5" />
-          ) : (
-            <IconScreenShare className="h-4 w-4 sm:h-5 sm:w-5" />
-          )}
-        </button>
-        <button
-          onClick={handleNext}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 sm:h-11 sm:w-11"
-          title="Next match"
-        >
-          <IconUserOff className="h-4 w-4 sm:h-5 sm:w-5" />
-        </button>
-        <button
-          onClick={handleLeave}
-          className="ml-1 mr-1 flex h-10 items-center justify-center gap-2 rounded-full bg-red-600 px-4 hover:bg-red-500 sm:h-11 sm:px-6"
-          title="Leave call"
-        >
-          <IconPhoneOff className="h-4 w-4 sm:h-5 sm:w-5" />
-          <span className="hidden text-sm font-medium sm:inline">Leave</span>
-        </button>
+        <div className="w-full overflow-x-auto scrollbar-hide">
+          <div className="flex w-full items-center justify-center gap-4 sm:justify-between">
+            <div className="flex shrink-0 items-center gap-1 rounded-full border border-white/10 bg-black/50 p-1 backdrop-blur sm:gap-2 sm:p-1.5">
+              <button
+                onClick={handleRecheck}
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 sm:h-11 sm:w-11"
+                title="Recheck"
+              >
+                <IconRefresh className="h-4 w-4 sm:h-5 sm:w-5" />
+              </button>
+              <button
+                onClick={toggleMic}
+                className={`flex h-10 w-10 items-center justify-center rounded-full transition sm:h-11 sm:w-11 ${
+                  micOn
+                    ? "bg-white/10 hover:bg-white/20"
+                    : "bg-red-600 hover:bg-red-500"
+                }`}
+                title={micOn ? "Mute" : "Unmute"}
+              >
+                {micOn ? (
+                  <IconMicrophone className="h-4 w-4 sm:h-5 sm:w-5" />
+                ) : (
+                  <IconMicrophoneOff className="h-4 w-4 sm:h-5 sm:w-5" />
+                )}
+              </button>
+              <button
+                onClick={toggleCam}
+                className={`flex h-10 w-10 items-center justify-center rounded-full transition sm:h-11 sm:w-11 ${
+                  camOn
+                    ? "bg-white/10 hover:bg-white/20"
+                    : "bg-red-600 hover:bg-red-500"
+                }`}
+                title={camOn ? "Stop video" : "Start video"}
+              >
+                {camOn ? (
+                  <IconVideo className="h-4 w-4 sm:h-5 sm:w-5" />
+                ) : (
+                  <IconVideoOff className="h-4 w-4 sm:h-5 sm:w-5" />
+                )}
+              </button>
+              <button
+                onClick={toggleScreenShare}
+                className={`flex h-10 w-10 items-center justify-center rounded-full transition sm:h-11 sm:w-11 ${
+                  screenShareOn
+                    ? "bg-blue-600 hover:bg-blue-500"
+                    : "bg-white/10 hover:bg-white/20"
+                }`}
+                title={screenShareOn ? "Stop sharing" : "Share screen"}
+              >
+                {screenShareOn ? (
+                  <IconScreenShareOff className="h-4 w-4 sm:h-5 sm:w-5" />
+                ) : (
+                  <IconScreenShare className="h-4 w-4 sm:h-5 sm:w-5" />
+                )}
+              </button>
+              <button
+                onClick={handleNext}
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 sm:h-11 sm:w-11"
+                title="Next match"
+              >
+                <IconUserOff className="h-4 w-4 sm:h-5 sm:w-5" />
+              </button>
+              <button
+                onClick={handleLeave}
+                className="ml-1 mr-1 flex h-10 items-center justify-center gap-2 rounded-full bg-red-600 px-4 hover:bg-red-500 sm:h-11 sm:px-6"
+                title="Leave call"
+              >
+                <IconPhoneOff className="h-4 w-4 sm:h-5 sm:w-5" />
+                <span className="hidden text-sm font-medium sm:inline">
+                  Leave
+                </span>
+              </button>
+            </div>
+
+            <div className="flex shrink-0 items-center gap-1 rounded-full border border-white/10 bg-black/50 p-1 backdrop-blur sm:gap-2 sm:p-1.5">
+              <button
+                onClick={() => setShowChat((v) => !v)}
+                className={`flex h-10 w-10 items-center justify-center rounded-full transition sm:h-11 sm:w-11 ${
+                  showChat
+                    ? "bg-indigo-600 hover:bg-indigo-500"
+                    : "bg-white/10 hover:bg-white/20"
+                }`}
+                title={showChat ? "Close chat" : "Open chat"}
+              >
+                <IconMessage className="h-4 w-4 sm:h-5 sm:w-5" />
+              </button>
+              <button
+                onClick={() => handleReport()}
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 sm:h-11 sm:w-11"
+                title="Report user"
+              >
+                <IconFlag className="h-4 w-4 sm:h-5 sm:w-5" />
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="flex shrink-0 items-center gap-1 rounded-full border border-white/10 bg-black/50 p-1 backdrop-blur sm:gap-2 sm:p-1.5">
-        <button
-          onClick={() => setShowChat((v) => !v)}
-          className={`flex h-10 w-10 items-center justify-center rounded-full transition sm:h-11 sm:w-11 ${
-            showChat ? "bg-indigo-600 hover:bg-indigo-500" : "bg-white/10 hover:bg-white/20"
-          }`}
-          title={showChat ? "Close chat" : "Open chat"}
-        >
-          <IconMessage className="h-4 w-4 sm:h-5 sm:w-5" />
-        </button>
-        <button
-          onClick={() => handleReport()}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 sm:h-11 sm:w-11"
-          title="Report user"
-        >
-          <IconFlag className="h-4 w-4 sm:h-5 sm:w-5" />
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-    
       {/* --- Timeout Alert Modal --- */}
       {/* This is a standard overlay modal and is already responsive. No changes needed. */}
       {showTimeoutAlert && (
