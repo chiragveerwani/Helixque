@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import type { Socket } from "socket.io-client";
+import { toast } from "sonner";
 
 type ChatMessage = {
   text: string;
@@ -20,12 +21,14 @@ export default function ChatPanel({
   name,
   mySocketId,
   collapsed = false,
+  isOpen = false,
 }: {
   socket: Socket | null;
   roomId: string | null;
   name: string;
   mySocketId: string | null;
   collapsed?: boolean;
+  isOpen?: boolean;
 }) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -49,6 +52,13 @@ export default function ChatPanel({
   }, [socket]);
 
   const canSend = !!socket && socket.connected && !!roomId && !!name && !!(sidRef.current || mySocketId);
+
+  // Dismiss existing toasts when chat window opens
+  useEffect(() => {
+    if (isOpen) {
+      toast.dismiss();
+    }
+  }, [isOpen]);
 
   // auto-scroll to bottom on new messages - DISABLED per user request
   // useEffect(() => {
@@ -78,6 +88,23 @@ export default function ChatPanel({
         const next = [...prev, { ...m, kind: "user" as const }];
         return next.length > MAX_BUFFER ? next.slice(-MAX_BUFFER) : next;
       });
+        try {
+          // Only show toast if chat window is closed
+          if (!isOpen) {
+            // subtle toast at bottom-right when receiving a new message
+            toast.success(
+              `${m.from}: ${m.text.length > 80 ? m.text.slice(0, 77) + '...' : m.text}`,
+              { 
+                duration: 3500,
+                position: 'bottom-right',
+                style: {
+                  bottom: '100px', // Position above the control icons
+                  right: '20px',
+                }
+              }
+            );
+          }
+        } catch {}
     };
 
     const onSystem = (m: { text: string; ts?: number }) => {
@@ -137,6 +164,10 @@ export default function ChatPanel({
       const next = [...prev, { ...payload, kind: "user" as const }];
       return next.length > MAX_BUFFER ? next.slice(-MAX_BUFFER) : next;
     });
+    try {
+      // toast for outgoing message (short & subtle)
+      toast.success("Message sent", { duration: 1200 });
+    } catch {}
     socket!.emit("chat:message", payload);
     setInput("");
     socket!.emit("chat:typing", { roomId, from: name, typing: false });
@@ -204,7 +235,7 @@ export default function ChatPanel({
           <button
             onClick={sendMessage}
             disabled={!canSend || !input.trim()}
-            className="h-10 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-sm font-medium"
+            className="cursor-pointer h-10 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-sm font-medium"
           >
             Send
           </button>
