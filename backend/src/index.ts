@@ -62,9 +62,9 @@ io.on("connection", (socket: Socket) => {
   const initialRoomId = (roomFromAuth || roomFromQuery || "").toString().trim();
 
   if (initialRoomId) {
-    joinChatRoom(socket, initialRoomId, meta.name);
+    // Do not auto-announce chat joins here; let the client emit chat:join after listeners are attached.
     userManager.setRoom(socket.id, initialRoomId);
-    socket.join(initialRoomId); // <-- so socket.to(roomId) works
+    socket.join(initialRoomId); // non-chat room for media and control events
   }
 
   // ⬇️ Keep UserManager in sync when client explicitly joins later

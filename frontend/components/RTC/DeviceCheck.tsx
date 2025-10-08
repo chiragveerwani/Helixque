@@ -52,12 +52,6 @@ export default function DeviceCheck() {
       [localAudioTrack, localVideoTrack].forEach((t) => t?.stop());
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // re-init on toggles
-  useEffect(() => {
-    getCam();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [videoOn, audioOn]);
 
   if (joined) {
@@ -91,18 +85,18 @@ export default function DeviceCheck() {
       {/* Main centered container */}
       <div className="w-full max-w-5xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-white mb-4">Ready to connect?</h1>
-          <p className="text-neutral-400 text-lg">Check your camera and microphone before joining</p>
+        <div className="text-center mb-12 space-y-1">
+          <h1 className="text-4xl font-bold text-white">Ready to connect?</h1>
+          <p className="text-neutral-400 text-sm">Check your camera and microphone before joining</p>
         </div>
 
         {/* Main content grid */}
-        <div className="grid lg:grid-cols-2 gap-8 items-start">
+        <div className="grid lg:grid-cols-2 gap-8 items-stretch">
           
           {/* Left Side - Video Preview */}
-          <div className="space-y-6">
+          <div className="space-y-4 h-full flex flex-col">
             {/* Video preview container - rounded */}
-            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
+            <div className="relative flex-1 overflow-hidden rounded-2xl border border-white/10 bg-black shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
               <div className="aspect-video w-full bg-black relative">
                 {videoOn ? (
                   <video
@@ -172,36 +166,36 @@ export default function DeviceCheck() {
           <div className="space-y-6">
             <div className="p-8 rounded-2xl border border-white/10 bg-neutral-900/50 backdrop-blur shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
               <div className="space-y-6">
-                <div>
-                  <h2 className="text-2xl font-semibold text-white mb-6">Join the conversation</h2>
+                <div className="flex flex-col gap-4">
+                  <h2 className="text-2xl font-semibold text-white">Join the conversation</h2>
                   
-                  <label className="block text-sm font-medium text-white mb-3">
-                    What should we call you?
-                  </label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Enter your name"
-                    className="w-full h-12 px-4 rounded-xl border border-white/10 bg-neutral-800/50 text-white placeholder-neutral-500 focus:border-white/30 focus:outline-none transition-colors backdrop-blur"
-                  />
+                  <div className="flex flex-col gap-1">
+                    <label className="block text-sm font-medium text-gray-300">
+                      What should we call you?
+                    </label>
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Enter your name"
+                      className="w-full h-12 px-4 rounded-xl border border-white/10 bg-neutral-800/50 text-white placeholder-neutral-500 focus:border-white/30 focus:outline-none transition-colors backdrop-blur"
+                    />
+                    </div>
+                    <button
+                      onClick={() => setJoined(true)}
+                      disabled={!name.trim()}
+                      className="cursor-pointer w-full h-12 bg-white text-black rounded-xl font-medium hover:bg-white/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 disabled:hover:bg-white"
+                    >
+                      Join Meeting
+                    </button>
+
+                  <p className="text-xs text-neutral-500 text-center">
+                    By joining, you agree to our terms of service and privacy policy
+                  </p>
                 </div>
-
-                <button
-                  onClick={() => setJoined(true)}
-                  disabled={!name.trim()}
-                  className="cursor-pointer w-full h-12 bg-white text-black rounded-xl font-medium hover:bg-white/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 disabled:hover:bg-white"
-                >
-                  Join Meeting
-                </button>
-
-                <p className="text-xs text-neutral-500 text-center">
-                  By joining, you agree to our terms of service and privacy policy
-                </p>
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>

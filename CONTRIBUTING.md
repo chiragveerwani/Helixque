@@ -4,6 +4,11 @@ Thank you for your interest in contributing to Helixque! This document provides 
 
 ---
 
+> \[!IMPORTANT]  
+> - If an issue is assigned to you, please complete it **before requesting another one**.  
+> - A person can be assigned a **maximum of two issues** at a time to ensure fair distribution among all participants.
+
+
 ## ⭐ Before You Start
 
 1. **Starring the repository is mandatory** before contributing.  
