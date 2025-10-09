@@ -862,7 +862,7 @@ export default function Room({
   return (
     <div className="relative flex h-screen flex-col overflow-hidden bg-neutral-950 text-white">
       <main className="relative flex flex-1 overflow-hidden">
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="flex-1 h-[635px]  w-[1010px] ">
           <div className="mx-auto h-[600px]">
             <VideoGrid
               localVideoRef={localVideoRef}
@@ -884,14 +884,14 @@ export default function Room({
         <div
           className={`
             bg-neutral-950 backdrop-blur-sm transition-transform duration-300
-            fixed inset-y-0 right-0 z-30 h-full w-full max-w-sm border-l border-white/10
-            md:relative md:z-auto md:h-auto md:w-[300px] md:max-w-none md:border-l
+            fixed inset-y-0 right-0 z-30 h-[635px] w-full max-w-sm border-l border-white/10
+            md:relative md:z-auto md:h-[635px] md:w-[300px] md:max-w-none md:border-l
             ${
               showChat ? "translate-x-0" : "translate-x-full md:hidden" 
             }
           `}
         >
-          <div className="h-full">
+          <div className="h-[630px] px-[5px]">
             <ChatPanel
               socket={socketRef.current}
               roomId={roomId}
