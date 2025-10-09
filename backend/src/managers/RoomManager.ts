@@ -1,4 +1,4 @@
-import { User } from "./UserManger"; // keep your import name as-is
+import { User } from "../type";
 
 let GLOBAL_ROOM_ID = 1;
 
@@ -33,7 +33,7 @@ export class RoomManager {
         const receivingUser = room.user1.socket.id === senderSocketid ? room.user2 : room.user1;
         receivingUser?.socket.emit("offer", { sdp, roomId });
     }
-    
+
     onAnswer(roomId: string, sdp: string, senderSocketid: string) {
         const room = this.rooms.get(roomId);
         if (!room) return;

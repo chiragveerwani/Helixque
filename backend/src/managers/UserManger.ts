@@ -1,14 +1,8 @@
 import { Socket } from "socket.io";
 import { RoomManager } from "./RoomManager";
+import { User } from "../type";
 
 const QUEUE_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
-
-export interface User {
-  socket: Socket;
-  name: string;
-  meta?: Record<string, unknown>; // optional, for diagnostics
-  joinedAt?: number;
-}
 
 export class UserManager {
   private users: User[];
@@ -108,13 +102,13 @@ export class UserManager {
   private startQueueTimeout(socketId: string) {
     console.log(`[TIMEOUT] Starting timeout for socket: ${socketId}, timeout: ${QUEUE_TIMEOUT_MS}ms`);
     this.clearQueueTimeout(socketId);
-    
+
     this.queueEntryTime.set(socketId, Date.now());
-    
+
     const timeout = setTimeout(() => {
       this.handleQueueTimeout(socketId);
     }, QUEUE_TIMEOUT_MS);
-    
+
     this.timeoutIntervals.set(socketId, timeout);
   }
 
@@ -131,10 +125,10 @@ export class UserManager {
     console.log(`[TIMEOUT] Handling timeout for socket: ${socketId}`);
     const user = this.users.find(u => u.socket.id === socketId);
     if (!user || !this.online.has(socketId) || !this.queue.includes(socketId)) {
-      console.log(`[TIMEOUT] User not found, offline, or not in queue:`, { 
-        user: !!user, 
-        online: this.online.has(socketId), 
-        inQueue: this.queue.includes(socketId) 
+      console.log(`[TIMEOUT] User not found, offline, or not in queue:`, {
+        user: !!user,
+        online: this.online.has(socketId),
+        inQueue: this.queue.includes(socketId)
       });
       return;
     }
@@ -149,7 +143,7 @@ export class UserManager {
     } catch (error) {
       console.error("Failed to emit queue:timeout:", error);
     }
-    
+
     this.queue = this.queue.filter(id => id !== socketId);
     this.clearQueueTimeout(socketId);
   }
