@@ -18,6 +18,9 @@ const io = new Server(server, { cors: { origin: "*" } });
 
 const userManager = new UserManager();
 
+// Set the io instance for UserManager after creation
+userManager.setIo(io);
+
 // Health endpoint
 app.get("/healthz", async (_req, res) => {
   try {
