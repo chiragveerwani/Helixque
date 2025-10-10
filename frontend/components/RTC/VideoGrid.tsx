@@ -9,12 +9,12 @@ import {
 import React from "react";
 
 // Interfaces remain the same
-interface MediaState {
+export interface MediaState {
   micOn: boolean;
   camOn: boolean;
   screenShareOn: boolean;
 }
-interface PeerState {
+export interface PeerState {
   peerMicOn: boolean;
   peerCamOn: boolean;
   peerScreenShareOn: boolean;
@@ -52,7 +52,6 @@ export default function VideoGrid({
     return (
       <div className="flex h-full flex-col gap-4">
         <div className="flex flex-wrap justify-center gap-4">
-
           <div className="relative aspect-video w-40 overflow-hidden rounded-xl border border-white/10 bg-black shadow-lg sm:w-52 md:w-64">
             <video
               ref={localVideoRef}
@@ -123,10 +122,18 @@ export default function VideoGrid({
 
   // Regular Video Grid
   return (
-    <div className="grid h-full w-full grid-cols-1 gap-4 md:grid-cols-2">
+    // KEY CHANGE: Re-introduced the conditional logic based on 'showChat'.
+    // This will now stack the videos (grid-cols-1) when the chat is open.
+    <div className={`grid h-full w-full gap-4 transition-all duration-300 ${
+        showChat
+          ? 'grid-cols-1 grid-rows-2' 
+          : 'grid-cols-1 sm:grid-cols-2'
+      }`}>
       {/* Remote/Peer Video */}
-      <div className="relative min-h-0 overflow-hidden rounded-2xl border border-white/10 bg-black shadow-lg">
-        <div className="relative h-full w-full">
+      <div className={`relative overflow-hidden rounded-2xl border border-white/10 bg-black shadow-lg ${
+          showChat ? 'mx-auto aspect-[4/3] max-w-2xl' : 'min-h-0'
+        }`}>
+        <div className={`relative h-full w-full`}>
           <video
             ref={remoteVideoRef}
             autoPlay
@@ -149,7 +156,7 @@ export default function VideoGrid({
           <div className="absolute bottom-3 left-3 flex items-center gap-2 rounded-md bg-black/60 px-2 py-1 text-xs">
             <span>{lobby ? "—" : "Peer"}</span>
             {!lobby && !peerMicOn && (
-              <span className="ml-1 inline-flex items-center gap-1 rounded bg-red-600/80 px-1.5 py-0.5">
+              <span className="ml-1 inline-flex items-center gap-1 rounded bg-red-600/80 px-1-5 py-0.5">
                 <IconMicrophoneOff className="h-3 w-3" />
                 <span>muted</span>
               </span>
@@ -165,8 +172,10 @@ export default function VideoGrid({
       </div>
 
       {/* Local/Your Video */}
-      <div className="relative min-h-0 overflow-hidden rounded-2xl border border-white/10 bg-black shadow-lg">
-        <div className="relative h-full w-full">
+      <div className={`relative overflow-hidden rounded-2xl border border-white/10 bg-black shadow-lg ${
+          showChat ? 'mx-auto aspect-[4/3] max-w-2xl' : 'min-h-0'
+        }`}>
+        <div className={`relative h-full w-full`}>
           <video
             ref={localVideoRef}
             autoPlay
