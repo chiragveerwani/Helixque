@@ -213,8 +213,8 @@ export default function ChatPanel({
   if (collapsed) return null;
 
   return (
-    <div className="flex flex-col h-full bg-neutral-950 rounded-l-2xl overflow-hidden">
-      <div ref={scrollerRef} className="flex-1 overflow-y-auto px-3 py-3 space-y-2">
+    <div className="flex flex-col h-full bg-neutral-950 rounded-l-2xl overflow-hidden ">
+      <div ref={scrollerRef} className="flex-1 overflow-y-auto space-y-2 py-3 px-3">
         {messages.map((m, idx) => {
           const myId = mySocketId || sidRef.current;
           const mine = m.clientId === myId;
