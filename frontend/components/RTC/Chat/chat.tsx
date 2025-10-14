@@ -214,7 +214,7 @@ export default function ChatPanel({
 
   return (
     <div className="flex flex-col h-full bg-neutral-950 rounded-l-2xl overflow-hidden ">
-      <div ref={scrollerRef} className="flex-1 overflow-y-auto space-y-2  border-white/10 rounded-2xl border-1">
+      <div ref={scrollerRef} className="flex-1 overflow-y-auto space-y-2 py-3 px-3">
         {messages.map((m, idx) => {
           const myId = mySocketId || sidRef.current;
           const mine = m.clientId === myId;
@@ -246,7 +246,7 @@ export default function ChatPanel({
         {peerTyping && <div className="text-xs text-white/60 italic">{peerTyping}</div>}
       </div>
 
-      <div className="p-3 border-t border-white/10 border-1 rounded-2xl">
+      <div className="p-3 border-t border-white/10">
         <div className="flex items-center gap-2">
           <input
             className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500/60"

@@ -832,7 +832,7 @@ export default function Room({
             showChat ? "translate-x-0" : "translate-x-full"
           }`}
         >
-          <div className="h-full px-[5px]">
+          <div className="h-full">
             <ChatPanel
               socket={socketRef.current}
               roomId={roomId}
