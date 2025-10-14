@@ -29,7 +29,7 @@ interface ControlBarProps {
   onReport: () => void;
 }
 
-export default function ControlBar({
+export default function  ControlBar({
   mediaState,
   showChat,
   onToggleMic,
@@ -44,12 +44,12 @@ export default function ControlBar({
   const { micOn, camOn, screenShareOn } = mediaState;
 
   return (
-<div className="absolute bottom-0 left-0 right-0">
-  <div className="overflow-x-auto overflow-y-hidden scrollbar-hide">
-    <div className="h-[6rem] min-h-[40px] w-full flex items-center whitespace-nowrap">
+<div className="absolute bottom-0 left-0 right-0 h-20 z-50">
+  <div className="overflow-x-auto relative  top-3 overflow-y-hidden scrollbar-hide">
+    <div className="h-full w-full flex items-center whitespace-nowrap">
       
       {/* Left Spacer */}
-      <div className="flex w-[120px] items-center justify-start ml-4"></div>
+      <div className="flex w-[120px] items-center justify-y-start ml-4"></div>
 
       {/* Center Control Panel */}
       <div className="flex flex-1 justify-center">

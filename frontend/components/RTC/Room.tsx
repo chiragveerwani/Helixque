@@ -807,7 +807,10 @@ export default function Room({
   // ===== RENDER =====
   return (
     <div className="relative flex h-screen flex-col overflow-hidden bg-neutral-950 text-white">
-      <main className="absolute top-[16px] right-[16px] bottom-[80px] left-[16px] flex flex-1 overflow-hidden items-center ">
+      <main className="relative flex-1">
+        <div className={`relative mx-auto max-w-[1400px] h-[calc(100vh-80px)] transition-all duration-300 ${
+          showChat ? 'px-2 pr-[500px] sm:pr-[500px] md:pr-[540px] lg:pr-[600px]' : 'px-4'
+        } pt-4`}>
             <VideoGrid
               localVideoRef={localVideoRef}
               remoteVideoRef={remoteVideoRef}
@@ -823,14 +826,11 @@ export default function Room({
         
         {/* Hidden remote audio */}
         <audio ref={remoteAudioRef} autoPlay style={{ display: "none" }} />
+        </div>
         <div
-          className={`relative
-            bg-neutral-950 backdrop-blur-sm transition-transform duration-300
-             z-30 h-full
-            ${
-              showChat ? "translate-x-0" :"translate-x-full hidden" 
-            }
-          `}
+          className={`fixed top-4 right-0 bottom-20 w-full sm:w-[500px] md:w-[540px] lg:w-[600px] transform border border-white/10 border-r-0 bg-neutral-950 backdrop-blur transition-transform duration-300 rounded-l-2xl ${
+            showChat ? "translate-x-0" : "translate-x-full"
+          }`}
         >
           <div className="h-full px-[5px]">
             <ChatPanel
