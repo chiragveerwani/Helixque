@@ -828,7 +828,7 @@ export default function Room({
             bg-neutral-950 backdrop-blur-sm transition-transform duration-300
              z-30 h-full
             ${
-              showChat ? "translate-x-0" : "translate-x-full hidden" 
+              showChat ? "translate-x-0" :"translate-x-full hidden" 
             }
           `}
         >
