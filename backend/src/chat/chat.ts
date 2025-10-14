@@ -1,7 +1,12 @@
 // server/chat.ts
 import type { Server, Socket } from "socket.io";
-
-/** Join the socket to the chat room and announce */
+import type {
+  SocketData,
+  ChatJoinPayload,
+  ChatMessagePayload,
+  ChatTypingPayload,
+  ChatLeavePayload,
+} from "../type";
 export async function joinChatRoom(socket: Socket, roomId: string, name: string) {
   if (!roomId) return;
   const room = `chat:${roomId}`;
@@ -9,7 +14,7 @@ export async function joinChatRoom(socket: Socket, roomId: string, name: string)
   socket.join(room);
 
   // remember display name for this room (used for leave announcements)
-  const data = (socket.data as any) || ((socket as any).data = {});
+  const data = (socket.data as SocketData) || ((socket as Socket & { data: SocketData }).data = {});
   data.chatNames = data.chatNames || {};
   data.chatNames[room] = name;
 
@@ -20,7 +25,7 @@ export async function joinChatRoom(socket: Socket, roomId: string, name: string)
       const peers = await socket.nsp.in(room).fetchSockets();
       for (const peer of peers) {
         if (peer.id === socket.id) continue; // skip self
-        const peerName = (peer as any).data?.chatNames?.[room] ?? "A user";
+        const peerName = (peer as any).data?.chatNames?.[room] || "A user"; // Changed from ?? to || for better compatibility
         socket.emit("chat:system", { text: `${peerName} joined the chat`, ts: Date.now() });
       }
     } catch {}
@@ -35,54 +40,48 @@ export async function joinChatRoom(socket: Socket, roomId: string, name: string)
 
 export function wireChat(io: Server, socket: Socket) {
   // Allows explicit joins (reconnects/late-joins)
-  socket.on("chat:join", async ({ roomId, name }: { roomId: string; name: string }) => {
-    await joinChatRoom(socket, roomId, name);
+  socket.on("chat:join", async ({ roomId, name }: ChatJoinPayload) => {
+    await joinChatRoom(socket, roomId, name || "A user");
   });
 
   // Broadcast a message to everyone in the chat room
-  socket.on("chat:message", (payload: {
-    roomId: string;
-    text: string;
-    from: string;      // display name
-    clientId: string;  // sender socket.id or app user id
-    ts?: number;
-  }) => {
+  socket.on("chat:message", (payload: ChatMessagePayload) => {
     const { roomId, text, from, clientId, ts } = payload || {};
-    const safeText = (text ?? "").toString().trim().slice(0, 1000);
+    const safeText = (text || "").toString().trim().slice(0, 1000); // Changed from ?? to || for better compatibility
     if (!roomId || !safeText) return;
 
     socket.nsp.in(`chat:${roomId}`).emit("chat:message", {
       text: safeText,
       from,
       clientId,
-      ts: ts ?? Date.now(),
+      ts: ts || Date.now(), // Changed from ?? to || for better compatibility
     });
   });
 
   // Typing indicator to peers (not echoed to sender)
-  socket.on("chat:typing", ({ roomId, from, typing }: { roomId: string; from: string; typing: boolean }) => {
+  socket.on("chat:typing", ({ roomId, from, typing }: ChatTypingPayload) => {
     if (!roomId) return;
     socket.to(`chat:${roomId}`).emit("chat:typing", { from, typing });
   });
 
   // Explicit leave (e.g., navigating away or switching rooms)
-  socket.on("chat:leave", ({ roomId, name }: { roomId: string; name: string }) => {
+  socket.on("chat:leave", ({ roomId, name }: ChatLeavePayload) => {
     if (!roomId) return;
     const room = `chat:${roomId}`;
     if (socket.rooms.has(room)) {
       socket.leave(room);
       socket.nsp.in(room).emit("chat:system", { text: `${name} left the chat`, ts: Date.now() });
     }
-    const data = (socket.data as any) || ((socket as any).data = {});
+    const data = (socket.data as SocketData) || ((socket as Socket & { data: SocketData }).data = {});
     if (data.chatNames) delete data.chatNames[room];
   });
 
   // Announce leave on disconnect across all chat rooms this socket was part of
   socket.on("disconnecting", () => {
-    const data = (socket.data as any) || {};
+    const data = (socket.data as SocketData) || {};
     for (const room of socket.rooms) {
       if (typeof room === "string" && room.startsWith("chat:")) {
-        const displayName = data.chatNames?.[room] ?? "A user";
+        const displayName = data.chatNames?.[room] || "A user"; // Changed from ?? to || for better compatibility
         socket.nsp.in(room).emit("chat:system", { text: `${displayName} left the chat`, ts: Date.now() });
       }
     }

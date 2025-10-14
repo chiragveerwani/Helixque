@@ -117,7 +117,7 @@ export default function ChatPanel({
             const who = (match[1] || "").trim();
             const action = match[2];
             const isSelf = who.length > 0 && who.toLowerCase() === (name || "").toLowerCase();
-            return `${isSelf ? name : "peer"} ${action} the chat`;
+            return `${isSelf ? name : "Peer"} ${action} the chat`;
           }
         } catch {}
         return txt;
@@ -144,15 +144,18 @@ export default function ChatPanel({
       }
     };
 
- //   const onPartnerLeft = ({ reason }: { reason: string }) => {
-  //    onSystem({ text: `Your partner left (${reason}).` });
-  //  };
+
+    // Handler for when partner leaves the chat
+    // const onPartnerLeft = ({ reason }: { reason: string }) => {
+    //   console.log("👋 PARTNER LEFT - Chat event received with reason:", reason);
+    //   onSystem({ text: `Your partner left (${reason}).` });
+    // };
 
     socket.on("connect", onConnect);
     socket.on("chat:message", onMsg);
     socket.on("chat:system", onSystem);
     socket.on("chat:typing", onTyping);
- //   socket.on("partner:left", onPartnerLeft);
+    // socket.on("partner:left", onPartnerLeft);
 
     // clear chat when switching rooms BEFORE join to avoid wiping fresh system events
     setMessages([]);
@@ -165,7 +168,7 @@ export default function ChatPanel({
       socket.off("chat:message", onMsg);
       socket.off("chat:system", onSystem);
       socket.off("chat:typing", onTyping);
- //     socket.off("partner:left", onPartnerLeft);
+      // socket.off("partner:left", onPartnerLeft);
       // stop typing when leaving room/unmounting
       socket.emit("chat:typing", { roomId, from: name, typing: false });
       // announce leaving the chat room
@@ -210,8 +213,8 @@ export default function ChatPanel({
   if (collapsed) return null;
 
   return (
-    <div className="flex flex-col h-full bg-neutral-950 rounded-l-2xl overflow-hidden">
-      <div ref={scrollerRef} className="flex-1 overflow-y-auto space-y-2">
+    <div className="flex flex-col h-full bg-neutral-950 rounded-l-2xl overflow-hidden ">
+      <div ref={scrollerRef} className="flex-1 overflow-y-auto space-y-2  border-white/10 rounded-2xl border-1">
         {messages.map((m, idx) => {
           const myId = mySocketId || sidRef.current;
           const mine = m.clientId === myId;
@@ -243,7 +246,7 @@ export default function ChatPanel({
         {peerTyping && <div className="text-xs text-white/60 italic">{peerTyping}</div>}
       </div>
 
-      <div className="p-3 border-t border-white/10">
+      <div className="p-3 border-t border-white/10 border-1 rounded-2xl">
         <div className="flex items-center gap-2">
           <input
             className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500/60"
