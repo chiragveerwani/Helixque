@@ -808,8 +808,6 @@ export default function Room({
   return (
     <div className="relative flex h-screen flex-col overflow-hidden bg-neutral-950 text-white">
       <main className="absolute top-[16px] right-[16px] bottom-[80px] left-[16px] flex flex-1 overflow-hidden items-center ">
-       
-         
             <VideoGrid
               localVideoRef={localVideoRef}
               remoteVideoRef={remoteVideoRef}
@@ -823,8 +821,6 @@ export default function Room({
               peerState={peerState}
             />
         
-      
-
         {/* Hidden remote audio */}
         <audio ref={remoteAudioRef} autoPlay style={{ display: "none" }} />
         <div
