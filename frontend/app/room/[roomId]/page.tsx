@@ -1,22 +1,36 @@
 "use client";
-import { use } from "react";
-import { useEffect } from "react";
+
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-interface RoomPageProps {
-  params: Promise<{
-    roomId: string;
-  }>;
-}
-
-export default function RoomPage({ params }: RoomPageProps) {
+export default function RoomPage({ params }: any) {
+  const [roomId, setRoomId] = useState<string | null>(null);
   const router = useRouter();
-  const resolvedParams = use(params);
 
   useEffect(() => {
-    // Redirect to match page with roomId
-    router.push(`/match?roomId=${resolvedParams.roomId}`);
-  }, [resolvedParams.roomId, router]);
+    // If params is a promise, unwrap it
+    if (typeof params?.then === "function") {
+      params.then((resolved: any) => setRoomId(resolved.roomId));
+    } else {
+      setRoomId(params?.roomId);
+    }
+  }, [params]);
+
+  useEffect(() => {
+    if (!roomId) return;
+    const urlParams = new URLSearchParams(window.location.search);
+    const username = urlParams.get("username") || "";
+    const videoDeviceId = urlParams.get("videoDeviceId") || "";
+    const audioDeviceId = urlParams.get("audioDeviceId") || "";
+
+    const query = new URLSearchParams();
+    query.set("roomId", roomId);
+    if (username) query.set("username", username);
+    if (videoDeviceId) query.set("videoDeviceId", videoDeviceId);
+    if (audioDeviceId) query.set("audioDeviceId", audioDeviceId);
+
+    router.push(`/match?${query.toString()}`);
+  }, [roomId, router]);
 
   return (
     <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
@@ -27,3 +41,4 @@ export default function RoomPage({ params }: RoomPageProps) {
     </div>
   );
 }
+
